@@ -13,9 +13,8 @@ module.exports = (db) => {
         JOIN users
         ON timers.user_id = users.id;
       `
-    ).then(data => {
-      console.log(data);
-      res.json(data);
+    ).then(({ rows: timers }) => {
+      res.json(timers);
     });
   });
 
