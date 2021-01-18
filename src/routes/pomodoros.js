@@ -4,18 +4,43 @@ const router = express.Router();
 module.exports = (db) => {
 
   router.get("/", (req, res) => {
-    db.query(
-      `
-        SELECT * 
-        FROM timers
-        JOIN audio_alerts 
-        ON timers.shortbr_start_audio_alert_id = audio_alerts.id
-        JOIN users
-        ON timers.user_id = users.id;
-      `
-    ).then(({ rows: timers }) => {
-      res.json(timers);
-    });
+    const query1 = `
+      SELECT * 
+      FROM timers
+    `;
+
+    const query2 = `
+      SELECT *
+      FROM audio_alerts
+    `;
+
+    Promise.all([db.query(query1), db.query(query2)])
+      .then(([timersData, audiosData]) => {
+        const timers = timersData.rows;
+        const audios = audiosData.rows;
+
+        for (const timer of timers) {
+          for (const audio of audios) {
+            if (timer.shortbr_start_audio_alert_id === audio.id) {
+              timer.shortbr_start_audio_alert_id = audio.file_name;
+            }
+
+            if (timer.shortbr_end_audio_alert_id === audio.id) {
+              timer.shortbr_end_audio_alert_id = audio.file_name;
+            }
+
+            if (timer.longbr_start_audio_alert_id === audio.id) {
+              timer.longbr_start_audio_alert_id = audio.file_name;
+            }
+            
+            if (timer.longbr_end_audio_alert_id === audio.id) {
+              timer.longbr_end_audio_alert_id = audio.file_name;
+            }
+          }
+        }
+        console.log(audios);
+        res.json(timers);
+      });
   });
 
 
