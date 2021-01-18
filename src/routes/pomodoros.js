@@ -38,7 +38,6 @@ module.exports = (db) => {
             }
           }
         }
-        console.log(audios);
         res.json(timers);
       });
   });
