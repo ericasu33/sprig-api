@@ -15,7 +15,7 @@ module.exports = (db) => {
       `;
 
     const query2 = `
-        SELECT entries.id AS entry_ID, categories.name AS category_name, categories.color AS category_color
+        SELECT entries.id AS entry_ID, entries.start_time, entries.pause_start_time, entries.end_time, entries.cumulative_pause_duration, entries.intensity, categories.name AS category_name, categories.color AS category_color
         FROM entries
         JOIN categories
         ON categories.id = entries.category_id
