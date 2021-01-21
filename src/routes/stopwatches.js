@@ -5,7 +5,7 @@ module.exports = (db) => {
 
   router.get("/", (req, res) => {
     const query1 = `
-        SELECT entries.id AS entry_ID, tags.tag AS tag_name
+        SELECT entries.id AS entry_ID, tags.tag AS tag_name 
         FROM entries
         JOIN entries_tags
         ON entries_tags.entries_id = entries.id
@@ -15,7 +15,7 @@ module.exports = (db) => {
       `;
 
     const query2 = `
-        SELECT entries.id AS entry_ID, entries.start_time, entries.pause_start_time, entries.end_time, entries.cumulative_pause_duration, entries.intensity, categories.name AS category_name, categories.color AS category_color
+        SELECT entries.id AS entry_ID, entries.start_time, entries.pause_start_time, entries.end_time, entries.cumulative_pause_duration, EXTRACT(EPOCH FROM (entries.end_time - entries.start_time)) - entries.cumulative_pause_duration AS total_duration_ms, entries.intensity, categories.name AS category_name, categories.color AS category_color
         FROM entries
         JOIN categories
         ON categories.id = entries.category_id
