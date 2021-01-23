@@ -31,7 +31,7 @@ db
 app.use(cors());
 app.use(cookieSession({
   name: 'session',
-  keys: ["lilduck"],
+  keys: ["lilduck", "ahah"],
 }));
 app.use(morgan('dev'));
 app.use(express.static("public"));
@@ -42,11 +42,13 @@ app.use(bodyParser.json());
 // Separated Routes for each Resource
 // Note: Feel free to replace the example routes below with your own
 
+const userRoutes = require("./routes/user");
 const pomodorosRoutes = require("./routes/pomodoros");
 const stopwatchsRoutes = require("./routes/stopwatches");
 
 // Mount all resource routes
 
+app.use("/api/user", userRoutes(db));
 app.use("/api/pomodoro", pomodorosRoutes(db));
 app.use("/api/stopwatches", stopwatchsRoutes(db));
 
