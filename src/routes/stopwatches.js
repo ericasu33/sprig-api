@@ -41,6 +41,58 @@ module.exports = (db) => {
       });
   });
 
+  router.post('/', (req, res) => {
+    const { entry } = req.body;
+    const query = `
+    INSERT INTO entries (category_id, start_time, end_time, pause_start_time, cumulative_pause_duration, intensity)
+    VALUES ($1, $2, $3, $4, $5, $6)
+    RETURNING *;
+    `;
+    db.query(query, [
+      ,
+      ,
+      ,
+      ,
+      ,
+      ,
+    ])
+      .then((data) => {
+
+      })
+      .catch((err) => {
+
+      });
+  });
+
+  router.post('/:id', (req, res) => {
+    const { entry } = req.body;
+    const query = `
+    UPDATE entries
+    SET category_id = $2, 
+        start_time = $3, 
+        end_time = $4,
+        pause_start_time = $5,
+        cumulative_pause_duration = $6, 
+        intensity = $7
+    WHERE id = $1
+    RETURNING *;
+    `;
+    db.query(query, [
+      req.params.id,
+      ,
+      ,
+      ,
+      ,
+      ,
+      ,
+    ])
+      .then((data) => {
+        res.json(data.rows[0]);
+      })
+      .catch((err) => {
+        res.json(err);
+      });
+  });
 
   return router;
 
