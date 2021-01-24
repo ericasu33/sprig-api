@@ -49,18 +49,18 @@ module.exports = (db) => {
     RETURNING *;
     `;
     db.query(query, [
-      ,
-      ,
-      ,
-      ,
-      ,
-      ,
+      entry.category_id,
+      entry.start_time,
+      entry.end_time,
+      entry.pause_start_time,
+      entry.cumulative_pause_duration,
+      entry.intensity,
     ])
       .then((data) => {
-
+        res.json(data.rows[0]);
       })
       .catch((err) => {
-
+        res.json(err);
       });
   });
 
@@ -79,12 +79,12 @@ module.exports = (db) => {
     `;
     db.query(query, [
       req.params.id,
-      ,
-      ,
-      ,
-      ,
-      ,
-      ,
+      entry.category_id,
+      entry.start_time,
+      entry.end_time,
+      entry.pause_start_time,
+      entry.cumulative_pause_duration,
+      entry.intensity,
     ])
       .then((data) => {
         res.json(data.rows[0]);
