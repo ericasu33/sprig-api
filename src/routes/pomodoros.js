@@ -42,6 +42,31 @@ module.exports = (db) => {
       });
   });
 
+  router.post('/', (req, res) => {
+    const query = `
+    
+    `;
+    db.query(query, [])
+      .then((data) => {
+
+      })
+      .catch((err) => {
+        
+      });
+  });
+  
+  router.post('/:id', (req, res) => {
+    const query = `
+    
+    `;
+    db.query(query, [])
+      .then((data) => {
+
+      })
+      .catch((err) => {
+        
+      });
+  });
 
   return router;
 
