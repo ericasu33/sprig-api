@@ -37,7 +37,35 @@ module.exports = (db) => {
         }
         res.json(
           entries
-        );
+          );
+        });
+      });
+
+  router.post('/:entry_id/tags/:tag_id', (req, res) => {
+    const query = `
+    INSERT INTO entries_tags (tag_id, entries_id)
+    VALUES ($1, $2)
+    RETURNING *;
+    `;
+    db.query(query, [req.params.entry_id, req.params.tag_id])
+      .then((data) => {
+        res.json(data.rows[0]);
+      })
+      .catch((err) => {
+        res.json(err);
+      });
+  });
+  
+  router.delete('/:entry_id/tags/:tag_id', (req, res) => {
+    const query = `
+    DELETE FROM entries_tags WHERE entries_id = $1, tag_id = $2;
+    `;
+    db.query(query, [req.params.entry_id, req.params.tag_id])
+      .then((data) => {
+        res.json(data.rows[0]);
+      })
+      .catch((err) => {
+        res.json(err);
       });
   });
 
@@ -63,17 +91,17 @@ module.exports = (db) => {
         res.json(err);
       });
   });
-
+  
   router.post('/:id', (req, res) => {
     const { entry } = req.body;
     const query = `
     UPDATE entries
     SET category_id = $2, 
-        start_time = $3, 
-        end_time = $4,
-        pause_start_time = $5,
-        cumulative_pause_duration = $6, 
-        intensity = $7
+    start_time = $3, 
+    end_time = $4,
+    pause_start_time = $5,
+    cumulative_pause_duration = $6, 
+    intensity = $7
     WHERE id = $1
     RETURNING *;
     `;
@@ -93,6 +121,7 @@ module.exports = (db) => {
         res.json(err);
       });
   });
+    
 
   return router;
 
