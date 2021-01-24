@@ -41,6 +41,34 @@ module.exports = (db) => {
       });
   });
 
+  router.post('/:entry_id/tags/:tag_id', (req, res) => {
+    const query = `
+    INSERT INTO entries_tags (tag_id, entries_id)
+    VALUES ($1, $2)
+    RETURNING *;
+    `;
+    db.query(query, [req.params.entry_id, req.params.tag_id])
+      .then((data) => {
+        res.json(data.rows[0]);
+      })
+      .catch((err) => {
+        res.json(err);
+      });
+  });
+
+
+  router.delete('/:entry_id/tags/:tag_id', (req, res) => {
+    const query = `
+    DELETE FROM entries_tags WHERE entries_id = $1, tag_id = $2;
+    `;
+    db.query(query, [req.params.entry_id, req.params.tag_id])
+      .then((data) => {
+        res.json(data.rows[0]);
+      })
+      .catch((err) => {
+        res.json(err);
+      });
+  });
 
   return router;
 
