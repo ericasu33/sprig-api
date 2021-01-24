@@ -42,11 +42,13 @@ app.use(bodyParser.json());
 // Separated Routes for each Resource
 // Note: Feel free to replace the example routes below with your own
 
+const soundsRoutes = require("./routes/sounds");
 const pomodorosRoutes = require("./routes/pomodoros");
 const stopwatchsRoutes = require("./routes/stopwatches");
 
 // Mount all resource routes
 
+app.use("/api/sound", soundsRoutes(db));
 app.use("/api/pomodoro", pomodorosRoutes(db));
 app.use("/api/stopwatches", stopwatchsRoutes(db));
 
