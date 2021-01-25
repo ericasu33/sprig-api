@@ -27,7 +27,7 @@ module.exports = (db) => {
   });
 
   router.post('/', (req, res) => {
-    const { timer } = req.body;
+    const timer = req.body;
     const query = `
     INSERT INTO timers (user_id, name, work, short_break, num_repeats, long_break, shortbr_start_audio_alert_id, shortbr_end_audio_alert_id, longbr_start_audio_alert_id, longbr_end_audio_alert_id)
     VALUES (NULL, $1, $2, $3, $4, $5, $6, $7, $8, $9)
@@ -47,12 +47,12 @@ module.exports = (db) => {
         res.json(data.rows[0]);
       })
       .catch((err) => {
-        res.json(err);
+        res.status(500).json(err);
       });
   });
   
-  router.post('/:id', (req, res) => {
-    const { timer } = req.body;
+  router.put('/:id', (req, res) => {
+    const timer = req.body;
     const query = `
     UPDATE timers
     SET name = $2, 
@@ -63,7 +63,7 @@ module.exports = (db) => {
         shortbr_start_audio_alert_id = $7,
         shortbr_end_audio_alert_id = $8,
         longbr_start_audio_alert_id = $9,
-        longbr_start_audio_alert_id = $10
+        longbr_end_audio_alert_id = $10
     WHERE id = $1
     RETURNING *;
     `;
@@ -83,7 +83,7 @@ module.exports = (db) => {
         res.json(data.rows[0]);
       })
       .catch((err) => {
-        res.json(err);
+        res.status(500).json(err);
       });
   });
 
