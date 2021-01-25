@@ -56,6 +56,19 @@ module.exports = (db) => {
       });
   });
   
+  router.delete('/:entry_id/tags', (req, res) => {
+    const query = `
+    DELETE FROM entries_tags WHERE entries_id = $1;
+    `;
+    db.query(query, [req.params.entry_id, req.params.tag_id])
+      .then((data) => {
+        res.json(data.rows[0]);
+      })
+      .catch((err) => {
+        res.json(err);
+      });
+  });
+
   router.delete('/:entry_id/tags/:tag_id', (req, res) => {
     const query = `
     DELETE FROM entries_tags WHERE entries_id = $1, tag_id = $2;
