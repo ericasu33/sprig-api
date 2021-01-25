@@ -59,7 +59,6 @@ module.exports = (db) => {
       });
   });
   
-<<<<<<< HEAD
   router.delete('/:entry_id/tags', (req, res) => {
     const query = `
     DELETE FROM entries_tags WHERE entries_id = $1;
@@ -73,9 +72,7 @@ module.exports = (db) => {
       });
   });
 
-=======
   // DELETE A TAG FOR AN ENTRY
->>>>>>> 8d3a9ca5c8a753b11e9707931a6fc1afccc90acb
   router.delete('/:entry_id/tags/:tag_id', (req, res) => {
     const query = `
     DELETE FROM entries_tags WHERE entries_id = $1, tag_id = $2;
