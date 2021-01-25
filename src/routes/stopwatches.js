@@ -3,6 +3,7 @@ const router = express.Router();
 
 module.exports = (db) => {
 
+  // BROWSE ENTRIES
   router.get("/", (req, res) => {
     const query1 = `
         SELECT entries.id AS entry_ID, tags.tag AS tag_name 
@@ -19,6 +20,7 @@ module.exports = (db) => {
         FROM entries
         JOIN categories
         ON categories.id = entries.category_id
+        ORDER BY entries.start_time
       `;
 
     Promise.all([db.query(query1), db.query(query2)])
@@ -37,10 +39,11 @@ module.exports = (db) => {
         }
         res.json(
           entries
-          );
-        });
+        );
       });
+  });
 
+  // ADD A TAG FOR AN ENTRY
   router.post('/:entry_id/tags/:tag_id', (req, res) => {
     const query = `
     INSERT INTO entries_tags (tag_id, entries_id)
@@ -56,6 +59,7 @@ module.exports = (db) => {
       });
   });
   
+  // DELETE A TAG FOR AN ENTRY
   router.delete('/:entry_id/tags/:tag_id', (req, res) => {
     const query = `
     DELETE FROM entries_tags WHERE entries_id = $1, tag_id = $2;
@@ -69,15 +73,16 @@ module.exports = (db) => {
       });
   });
 
+  // CREATE ENTRY
   router.post('/', (req, res) => {
-    const { entry } = req.body;
+    const entry = req.body;
     const query = `
     INSERT INTO entries (category_id, start_time, end_time, pause_start_time, cumulative_pause_duration, intensity)
     VALUES ($1, $2, $3, $4, $5, $6)
     RETURNING *;
     `;
     db.query(query, [
-      entry.category_id,
+      entry.category,
       entry.start_time,
       entry.end_time,
       entry.pause_start_time,
@@ -92,8 +97,9 @@ module.exports = (db) => {
       });
   });
   
+  // UPDATE ENTRY
   router.put('/:id', (req, res) => {
-    const { entry } = req.body;
+    const entry = req.body;
     const query = `
     UPDATE entries
     SET category_id = $2, 
@@ -107,13 +113,27 @@ module.exports = (db) => {
     `;
     db.query(query, [
       req.params.id,
-      entry.category_id,
+      entry.category,
       entry.start_time,
       entry.end_time,
       entry.pause_start_time,
       entry.cumulative_pause_duration,
       entry.intensity,
     ])
+      .then((data) => {
+        res.json(data.rows[0]);
+      })
+      .catch((err) => {
+        res.json(err);
+      });
+  });
+
+  // DELETE AN ENTRY
+  router.delete('/:id/', (req, res) => {
+    const query = `
+    DELETE FROM entries WHERE entries_id = $1;
+    `;
+    db.query(query, [req.params.id])
       .then((data) => {
         res.json(data.rows[0]);
       })
