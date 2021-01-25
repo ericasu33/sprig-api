@@ -4,7 +4,7 @@ const router = express.Router();
 module.exports = (db) => {
 
   router.get("/", (req, res) => {
-    const query1 = `
+    const query = `
       SELECT id, 
         user_id, 
         name, 
@@ -19,14 +19,9 @@ module.exports = (db) => {
       FROM timers
     `;
 
-    const query2 = `
-      SELECT *
-      FROM audio_alerts
-    `;
-
-    Promise.all([db.query(query1), db.query(query2)])
-      .then(([timersData, audiosData]) => {
-        const timers = timersData.rows;
+    db.query(query)
+      .then((data) => {
+        const timers = data.rows;
         res.json(timers);
       });
   });
