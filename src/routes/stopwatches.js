@@ -92,7 +92,7 @@ module.exports = (db) => {
       });
   });
   
-  router.post('/:id', (req, res) => {
+  router.put('/:id', (req, res) => {
     const { entry } = req.body;
     const query = `
     UPDATE entries
