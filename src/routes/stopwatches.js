@@ -28,7 +28,7 @@ module.exports = (db) => {
         end_time,
         pause_start_time,
         cumulative_pause_duration,
-        intensity
+        intensity * 100 as intensity
       FROM entries
     `;
     db.query(query)
@@ -41,7 +41,7 @@ module.exports = (db) => {
   // ADD A TAG FOR AN ENTRY
   router.post('/:entry_id/tags/:tag_id', (req, res) => {
     const query = `
-    INSERT INTO entries_tags (tag_id, entries_id)
+    INSERT INTO entries_tags (entries_id, tag_id)
     VALUES ($1, $2)
     RETURNING *;
     `;
@@ -58,7 +58,7 @@ module.exports = (db) => {
     const query = `
     DELETE FROM entries_tags WHERE entries_id = $1;
     `;
-    db.query(query, [req.params.entry_id, req.params.tag_id])
+    db.query(query, [req.params.entry_id])
       .then((data) => {
         res.json(data.rows[0]);
       })
@@ -70,7 +70,7 @@ module.exports = (db) => {
   // DELETE A TAG FOR AN ENTRY
   router.delete('/:entry_id/tags/:tag_id', (req, res) => {
     const query = `
-    DELETE FROM entries_tags WHERE entries_id = $1, tag_id = $2;
+    DELETE FROM entries_tags WHERE entries_id = $1 AND tag_id = $2;
     `;
     db.query(query, [req.params.entry_id, req.params.tag_id])
       .then((data) => {
@@ -126,7 +126,7 @@ module.exports = (db) => {
       entry.end_time,
       entry.pause_start_time,
       entry.cumulative_pause_duration,
-      entry.intensity,
+      entry.intensity/100,
     ])
       .then((data) => {
         res.json(data.rows[0]);
@@ -137,7 +137,7 @@ module.exports = (db) => {
   });
 
   // DELETE AN ENTRY
-  router.delete('/:id/', (req, res) => {
+  router.delete('/:id', (req, res) => {
     const query = `
     DELETE FROM entries WHERE entries_id = $1;
     `;
