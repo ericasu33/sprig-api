@@ -95,7 +95,7 @@ module.exports = (db) => {
       entry.end_time,
       entry.pause_start_time,
       entry.cumulative_pause_duration,
-      entry.intensity,
+      entry.intensity/100,
     ])
       .then((data) => {
         res.json(data.rows[0]);
@@ -139,7 +139,7 @@ module.exports = (db) => {
   // DELETE AN ENTRY
   router.delete('/:id', (req, res) => {
     const query = `
-    DELETE FROM entries WHERE entries_id = $1;
+    DELETE FROM entries WHERE id = $1;
     `;
     db.query(query, [req.params.id])
       .then((data) => {
