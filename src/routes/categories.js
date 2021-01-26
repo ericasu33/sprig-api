@@ -32,6 +32,23 @@ module.exports = (db) => {
       });
   });
 
+  router.put('/:id', (req, res) => {
+    const category = req.body;
+    const query = `
+    UPDATE categories
+    SET color = $2
+    WHERE id = $1
+    RETURNING *;
+    `;
+    db.query(query, [req.params.id, category.color])
+      .then((data) => {
+        res.json(data.rows[0]);
+      })
+      .catch((err) => {
+        res.json(err);
+      });
+  });
+
   router.delete('/:id', (req, res) => {
     const query = `
     DELETE FROM categories WHERE id = $1;
