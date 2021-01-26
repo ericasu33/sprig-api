@@ -23,7 +23,7 @@ module.exports = (db) => {
     VALUES ($1, $2)
     RETURNING *;
     `;
-    db.query(query, [category.name, category.color])
+    db.query(query, [category.value, category.color])
       .then((data) => {
         res.json(data.rows[0]);
       })
