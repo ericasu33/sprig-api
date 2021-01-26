@@ -16,6 +16,22 @@ module.exports = (db) => {
       });
   });
 
+  router.post('/', (req, res) => {
+    const tag = req.body;
+    const query = `
+    INSERT INTO tags (tag)
+    VALUES ($1)
+    RETURNING *;
+    `;
+    db.query(query, [tag.value])
+      .then((data) => {
+        res.json(data.rows[0]);
+      })
+      .catch((err) => {
+        res.json(err);
+      });
+  });
+
   router.delete('/:id', (req, res) => {
     const query = `
     DELETE FROM tags WHERE id = $1;
