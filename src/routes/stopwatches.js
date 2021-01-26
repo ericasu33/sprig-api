@@ -3,45 +3,40 @@ const router = express.Router();
 
 module.exports = (db) => {
 
-  // BROWSE ENTRIES
-  router.get("/", (req, res) => {
-    const query1 = `
-        SELECT entries.id AS entry_ID, tags.tag AS tag_name 
-        FROM entries
-        JOIN entries_tags
-        ON entries_tags.entries_id = entries.id
-        JOIN tags
-        on entries_tags.tag_id = tags.id
-        ORDER BY entry_id
-      `;
-
-    const query2 = `
-        SELECT entries.id AS entry_ID, entries.start_time, entries.pause_start_time, entries.end_time, entries.cumulative_pause_duration, EXTRACT(EPOCH FROM (entries.end_time - entries.start_time)) - entries.cumulative_pause_duration AS total_duration_ms, entries.intensity, categories.name AS category_name, categories.color AS category_color
-        FROM entries
-        JOIN categories
-        ON categories.id = entries.category_id
-        ORDER BY entries.start_time
-      `;
-
-    Promise.all([db.query(query1), db.query(query2)])
-      .then(([tagsData, entriesData]) => {
-        const tags = tagsData.rows;
-        const entries = entriesData.rows;
-
-        for (const entry of entries) {
-          for (const tag of tags) {
-            if (entry.tags && entry.entry_id === tag.entry_id) {
-              entry.tags.push(tag.tag_name);
-            } else if (!entry.tags && entry.entry_id === tag.entry_id) {
-              entry.tags = [tag.tag_name];
-            }
-          }
-        }
-        res.json(
-          entries
-        );
+  // GET ENTRIES-TAGS ASSOCIATIONS
+  router.get("/entries_tags", (req, res) => {
+    const query = `
+      SELECT entries.id AS entry_id, tags.id AS tag_id
+      FROM entries
+      JOIN entries_tags ON entries_tags.entries_id = entries.id
+      JOIN tags ON entries_tags.tag_id = tags.id
+      ORDER BY entry_id
+    `;
+    db.query(query)
+      .then((data) => {
+        const entries_tags = data.rows;
+        res.json(entries_tags);
       });
-  });
+    });
+
+  // GET ALL ENTRIES
+  router.get("/", (req, res) => {
+    const query = `
+      SELECT id, 
+        category_id AS category,
+        start_time,
+        end_time,
+        pause_start_time,
+        cumulative_pause_duration,
+        intensity
+      FROM entries
+    `;
+    db.query(query)
+      .then((data) => {
+        const entries = data.rows;
+        res.json(entries);
+      });
+    });
 
   // ADD A TAG FOR AN ENTRY
   router.post('/:entry_id/tags/:tag_id', (req, res) => {
@@ -160,15 +155,3 @@ module.exports = (db) => {
 
 };
 
-
-// `
-//         SELECT entries.id AS entry_ID, categories.name AS category_name, categories.color AS category_color, tags.tag AS tag_name
-//         FROM entries
-//         JOIN categories
-//         ON categories.id = entries.category_id
-//         JOIN entries_tags
-//         ON entries_tags.entries_id = entries.id
-//         JOIN tags
-//         on entries_tags.tag_id = tags.id
-//         ORDER BY entry_id
-//       `
