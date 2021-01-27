@@ -30,6 +30,7 @@ module.exports = (db) => {
         cumulative_pause_duration,
         intensity * 100 as intensity
       FROM entries
+      ORDER BY start_time DESC 
     `;
     db.query(query)
       .then((data) => {
